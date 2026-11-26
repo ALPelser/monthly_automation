@@ -2,15 +2,6 @@ import PyPDF2
 import openpyxl
 
 def extract_toll_data_from_pdf(pdf_path, start_page=1, end_page=2):
-    """
-    Extract vehicle and combined toll data from PDF using character positions.
-    Returns a dictionary with vehicle names as keys and combined toll amount as values.
-    
-    Args:
-        pdf_path: Path to PDF file
-        start_page: First page to extract (1-indexed, default 1)
-        end_page: Last page to extract (1-indexed, default 2)
-    """
     toll_data = {}
     
     with open(pdf_path, 'rb') as file:
@@ -32,14 +23,10 @@ def extract_toll_data_from_pdf(pdf_path, start_page=1, end_page=2):
             
             for line in lines:
                 if 'TOLL' in line and 'E-TOLL' in line and 'SERVICE' in line:
-                    # Found the header line
-                    # Find positions of TOLL and E-TOLL columns
                     toll_idx = line.find('TOLL')
                     etoll_idx = line.find('E-TOLL')
                     service_idx = line.find('SERVICE')
                     
-                    # Expand the column ranges slightly to capture full numbers
-                    # TOLL column: start a bit earlier to catch numbers that might start before header
                     toll_col_start = max(0, toll_idx - 5)  # Start 5 chars before
                     toll_col_end = etoll_idx
                     
@@ -83,8 +70,6 @@ def extract_toll_data_from_pdf(pdf_path, start_page=1, end_page=2):
                     # Combine registration parts and remove spaces
                     reg_no = (reg_part1 + reg_part2).replace(' ', '')
                     
-                    # Extract TOLL and E-TOLL using character positions
-                    # Get a wider range to ensure we capture full numbers
                     toll_text = line[toll_col_start:toll_col_end].strip()
                     etoll_text = line[etoll_col_start:etoll_col_end].strip()
                     
@@ -127,17 +112,6 @@ def extract_toll_data_from_pdf(pdf_path, start_page=1, end_page=2):
     return toll_data
 
 def update_excel_with_toll_data(excel_path, output_path, toll_data, vehicle_col='A', toll_col='B', start_row=2):
-    """
-    Update Excel sheet with combined toll data from PDF and save to a new file.
-    
-    Args:
-        excel_path: Path to original Excel file
-        output_path: Path to save updated Excel file
-        toll_data: Dictionary with vehicle names and combined toll amounts
-        vehicle_col: Column letter for vehicle names (default 'A')
-        toll_col: Column letter for combined toll amounts (default 'B')
-        start_row: First row with data (default 2, assumes row 1 is header)
-    """
     wb = openpyxl.load_workbook(excel_path)
     ws = wb.active
     

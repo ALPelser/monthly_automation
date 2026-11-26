@@ -3,20 +3,12 @@ import pandas as pd
 import re
 import sys
 
-# ==============================
-# CONFIGURATION
-# ==============================
-
 PDF_FILE = "EM28328.pdf"
 EXCEL_FILE = "vehicles.xlsx"
 OUTPUT_FILE = "vehicles_updated.xlsx"
 
 # If you want to skip pages before the odo section entirely:
 START_PAGE = 35  # set to e.g. 5 if odo always starts on page 6
-
-# ==============================
-# REGEX DEFINITIONS
-# ==============================
 
 PLATE_REGEX = r"""
 (
@@ -34,10 +26,6 @@ ODO_ROW_REGEX = r"""
 \s+(\d{5,7})           # ODO (capture this)
 """
 
-# ==============================
-# HELPERS
-# ==============================
-
 def normalize_plate(plate: str) -> str:
     return re.sub(r"\s+", "", plate).upper()
 
@@ -45,10 +33,6 @@ def exit_with_message(msg):
     print(msg)
     input("Press Enter to exit...")
     sys.exit(1)
-
-# ==============================
-# MAIN
-# ==============================
 
 def main():
     print("Starting odometer update...\n")
@@ -121,10 +105,6 @@ def main():
     print("\nDone!")
     print(f"Updated file saved as: {OUTPUT_FILE}")
     input("Press Enter to exit...")
-
-# ==============================
-# ENTRY POINT
-# ==============================
 
 if __name__ == "__main__":
     main()

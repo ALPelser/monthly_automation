@@ -3,15 +3,7 @@ import openpyxl
 import re
 
 def extract_fuel_data_from_pdf(pdf_path, start_page=1, end_page=2):
-    """
-    Extract vehicle and fuel data from PDF.
-    Returns a dictionary with vehicle names as keys and fuel amounts as values.
     
-    Args:
-        pdf_path: Path to PDF file
-        start_page: First page to extract (1-indexed, default 1)
-        end_page: Last page to extract (1-indexed, default 2)
-    """
     fuel_data = {}
     
     with open(pdf_path, 'rb') as file:
@@ -50,10 +42,6 @@ def extract_fuel_data_from_pdf(pdf_path, start_page=1, end_page=2):
                     # Combine registration parts and remove spaces
                     reg_no = (reg_part1 + reg_part2).replace(' ', '')
                     
-                    # Count how many comma-containing numbers we find
-                    # The FIRST one should be FUEL
-                    # Format: CARD TYPE REG1 REG2 VEHICLE_MAKE DRIVER FUEL OIL TYRES REPAIRS MISC TOLL E-TOLL SERVICE FIN TOTAL
-                    
                     comma_values = []
                     for i in range(4, len(parts)):
                         part = parts[i]
@@ -62,8 +50,6 @@ def extract_fuel_data_from_pdf(pdf_path, start_page=1, end_page=2):
                             if test_val.isdigit():
                                 comma_values.append(part)
                     
-                    # The FIRST comma value is FUEL
-                    # If there are NO comma values, fuel is empty (0)
                     if len(comma_values) > 0:
                         fuel_amount = comma_values[0]
                     else:
@@ -80,17 +66,6 @@ def extract_fuel_data_from_pdf(pdf_path, start_page=1, end_page=2):
     return fuel_data
 
 def update_excel_with_fuel_data(excel_path, output_path, fuel_data, vehicle_col='A', fuel_col='B', start_row=2):
-    """
-    Update Excel sheet with fuel data from PDF and save to a new file.
-    
-    Args:
-        excel_path: Path to original Excel file
-        output_path: Path to save updated Excel file
-        fuel_data: Dictionary with vehicle names and fuel amounts
-        vehicle_col: Column letter for vehicle names (default 'A')
-        fuel_col: Column letter for fuel amounts (default 'B')
-        start_row: First row with data (default 2, assumes row 1 is header)
-    """
     wb = openpyxl.load_workbook(excel_path)
     ws = wb.active  # Use active sheet, or specify: ws = wb['SheetName']
     
